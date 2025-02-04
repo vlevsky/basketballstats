@@ -74,6 +74,10 @@
         <h3>Stats</h3>
         <div class="stat-group"><p>Points Per Shot: <span id="pps">0</span></p></div>
         <div class="stat-group"><p>Points Per Shot (Excl. FT): <span id="ppsExFT">0</span></p></div>
+        <div class="stat-group"><p>Total Points Scored: <span id="totalPoints">0</span></p></div>
+        <div class="stat-group"><p>Total 2-Pointed Points: <span id="total2Points">0</span></p></div>
+        <div class="stat-group"><p>Total 3-Pointed Points: <span id="total3Points">0</span></p></div>
+        <div class="stat-group"><p>Total Possible Points: <span id="totalPossiblePoints">0</span></p></div>
         
         <button onclick="resetStats()">Reset</button>
         <button class="copy" onclick="copyStats()">Copy Stats Code</button>
@@ -105,8 +109,16 @@
             let totalShots = stats.madeFT + stats.missedFT + stats.made2 + stats.missed2 + stats.made3 + stats.missed3;
             let totalNonFTShots = stats.made2 + stats.missed2 + stats.made3 + stats.missed3;
             
+            let total2Points = stats.made2 * 2;
+            let total3Points = stats.made3 * 3;
+            let totalPossiblePoints = totalPoints + (stats.missed2 * 2) + (stats.missed3 * 3) + (stats.madeFT * 1) + (stats.missedFT * 1);
+            
             document.getElementById("pps").textContent = totalShots > 0 ? (totalPoints / totalShots).toFixed(2) : 0;
             document.getElementById("ppsExFT").textContent = totalNonFTShots > 0 ? ((stats.made2 * 2 + stats.made3 * 3) / totalNonFTShots).toFixed(2) : 0;
+            document.getElementById("totalPoints").textContent = totalPoints;
+            document.getElementById("total2Points").textContent = total2Points;
+            document.getElementById("total3Points").textContent = total3Points;
+            document.getElementById("totalPossiblePoints").textContent = totalPossiblePoints;
         }
         
         function calculatePercentage(made, total) {
