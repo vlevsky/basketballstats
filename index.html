@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Stat Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 300px;
+            margin: auto;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-group {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 8px;
+            margin: 3px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 48%;
+        }
+        button:hover {
+            background-color: #ff652f;
+        }
+        .made {
+            background-color: #28a745;
+        }
+        .made:hover {
+            background-color: #218838;
+        }
+        .copy {
+            width: 100%;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Basketball Stat Tracker</h2>
+        
+        <div class="stat-group"><p>Free Throws: <span id="madeFT">0</span> / <span id="missedFT">0</span> (<span id="ftPct">0%</span>)</p></div>
+        <button class="made" onclick="trackShot('madeFT')">+1 Made</button>
+        <button onclick="trackShot('missedFT')">+1 Missed</button>
+        
+        <div class="stat-group"><p>2-Pointers: <span id="made2">0</span> / <span id="missed2">0</span> (<span id="twoPct">0%</span>)</p></div>
+        <button class="made" onclick="trackShot('made2')">+1 Made</button>
+        <button onclick="trackShot('missed2')">+1 Missed</button>
+        
+        <div class="stat-group"><p>3-Pointers: <span id="made3">0</span> / <span id="missed3">0</span> (<span id="threePct">0%</span>)</p></div>
+        <button class="made" onclick="trackShot('made3')">+1 Made</button>
+        <button onclick="trackShot('missed3')">+1 Missed</button>
+        
+        <h3>Stats</h3>
+        <div class="stat-group"><p>Points Per Shot: <span id="pps">0</span></p></div>
+        <div class="stat-group"><p>Points Per Shot (Excl. FT): <span id="ppsExFT">0</span></p></div>
+        
+        <button onclick="resetStats()">Reset</button>
+        <button class="copy" onclick="copyStats()">Copy Stats Code</button>
+        <input type="text" id="pasteStats" placeholder="Paste code here" style="width: 100%; margin-top: 10px;">
+        <button class="copy" onclick="loadStats()">Load Stats</button>
+    </div>
+    <script>
+        let stats = { madeFT: 0, missedFT: 0, made2: 0, missed2: 0, made3: 0, missed3: 0 };
+        
+        function trackShot(type) {
+            stats[type]++;
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById("madeFT").textContent = stats.madeFT;
+            document.getElementById("missedFT").textContent = stats.missedFT;
+            document.getElementById("ftPct").textContent = calculatePercentage(stats.madeFT, stats.madeFT + stats.missedFT) + "%";
+            
+            document.getElementById("made2").textContent = stats.made2;
+            document.getElementById("missed2").textContent = stats.missed2;
+            document.getElementById("twoPct").textContent = calculatePercentage(stats.made2, stats.made2 + stats.missed2) + "%";
+            
+            document.getElementById("made3").textContent = stats.made3;
+            document.getElementById("missed3").textContent = stats.missed3;
+            document.getElementById("threePct").textContent = calculatePercentage(stats.made3, stats.made3 + stats.missed3) + "%";
+            
+            let totalPoints = stats.madeFT + (stats.made2 * 2) + (stats.made3 * 3);
+            let totalShots = stats.madeFT + stats.missedFT + stats.made2 + stats.missed2 + stats.made3 + stats.missed3;
+            let totalNonFTShots = stats.made2 + stats.missed2 + stats.made3 + stats.missed3;
+            
+            document.getElementById("pps").textContent = totalShots > 0 ? (totalPoints / totalShots).toFixed(2) : 0;
+            document.getElementById("ppsExFT").textContent = totalNonFTShots > 0 ? ((stats.made2 * 2 + stats.made3 * 3) / totalNonFTShots).toFixed(2) : 0;
+        }
+        
+        function calculatePercentage(made, total) {
+            return total > 0 ? ((made / total) * 100).toFixed(1) : 0;
+        }
+        
+        function resetStats() {
+            stats = { madeFT: 0, missedFT: 0, made2: 0, missed2: 0, made3: 0, missed3: 0 };
+            updateStats();
+        }
+        
+        function copyStats() {
+            navigator.clipboard.writeText(JSON.stringify(stats));
+        }
+        
+        function loadStats() {
+            try {
+                stats = JSON.parse(document.getElementById("pasteStats").value);
+                updateStats();
+            } catch {
+                alert("Invalid code!");
+            }
+        }
+        
+        window.onload = resetStats;
+    </script>
+</body>
+</html>
